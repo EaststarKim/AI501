@@ -1,0 +1,320 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[titletoc,title]{appendix}
+\usepackage{fancyhdr}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,mathtools}
+%\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\newcommand{\norm}[2][]{\lVert#2\rVert_{#1}}
+\usepackage{graphicx,float}
+\usepackage{changepage}
+
+\pagestyle{fancy} \fancyhf{}
+\lhead{Homework 1} \rhead{AI501}
+\rfoot{\thepage}
+\title{Homework 1}
+\author{20213073 Donggyu Kim}
+\date{March 23, 2021}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{enumerate}
+\item
+    \begin{enumerate}
+    \item
+    $\bm A_\Phi=
+    \begin{bmatrix}
+        2 & 2 & -1 \\
+        0 & 3 & -4 \\
+        4 & 4 & 3 \\
+        1 & 0 & 0
+    \end{bmatrix}$ \\
+    \item
+    rank$(\bm A_\Phi)=3$.
+    The columns of $\bm A_{\Phi}$ are linearly independent. \\
+    \item The kernel and image of $\Phi$ are as follows:
+    \begin{align*}
+    \text{ker}(\Phi)
+    & =\{\bm x\in\mathbb{R}^{3} \mid \Phi(\bm x)=\bm A_\Phi\bm x=0 \} \\
+    & =\{\bm 0\} \\
+    \text{Im}(\Phi)
+    & =\{\bm y\in\mathbb{R}^{4} \mid \exists\bm x\in\mathbb{R}^{3} \text{ s.t. } \Phi(\bm x)=\bm y\}\\
+    & =\left\{ \alpha\begin{bmatrix}2\\0\\4\\1\end{bmatrix}+
+         \beta \begin{bmatrix}2\\3\\4\\0\end{bmatrix}+
+         \gamma\begin{bmatrix}-1\\-4\\3\\0\end{bmatrix}
+         \middle| \ \alpha,\beta,\gamma\in\mathbb{R} \right\}
+    \end{align*}
+    Thus, dim(ker($\Phi))=0$ and dim(Im($\Phi))=3$.
+    \end{enumerate}
+\item
+    \begin{proof}\begin{align*}
+        \norm{\bm x}
+        & =\frac{1}{2}(\norm{\bm x}+\norm{\bm x}) \\
+        & =\frac{1}{2}(\norm{\bm x}+\norm{\bm{-x}})
+        && (\because \text{Homogeneity: }
+        \norm{(-1)\cdot\bm x}=|-1|\cdot\norm{\bm x}=\norm{\bm x}) \\
+        & \ge \frac{1}{2}\norm{\bm x+(\bm{-x})}
+        && (\because \text{Subadditivity})\\
+        & =\frac{1}{2}\norm{\bm 0} \\
+        & = 0
+    \end{align*}\end{proof}
+\item
+    \begin{enumerate}
+    \item\begin{proof}$ $\\
+    When $\bm x=\bm 0$,
+    it satisfies the inequality $\norm[p]{\bm x}=\norm[r]{\bm x}$.
+    
+    So let's think about the case when $\bm x \neq 0$.
+    Then, division by $\norm[p]{\bm x}$ is valid. \\
+    \[\sum_{i=1}^{n}\left(\frac{|x_{i}|}{\norm[p]{\bm x}}\right)^{p}
+    =\frac{1}{\norm[p]{\bm x}^{p}}\sum_{i=1}^{n}|x_{i}|^{p}
+    =1\]
+    This implies that,
+    \[0 \le \frac{|x_{i}|}{\norm[p]{\bm x}} \le 1\]
+    for all $i=1,2,\dots,n$.
+    
+    Since $0<r<p$,
+    \[\left(\frac{|x_{i}|}{\norm[p]{\bm x}}\right)^{p}
+    \le \left(\frac{|x_{i}|}{\norm[p]{\bm x}}\right)^{r}\]
+    Therefore,
+    \begin{align*}
+    1=\sum_{i=1}^{n}\left(\frac{|x_{i}|}{\norm[p]{\bm x}}\right)^{p}
+    & \le \sum_{i=1}^{n}\left(\frac{|x_{i}|}{\norm[p]{\bm x}}\right)^{r}
+    =\left(\frac{\norm[r]{\bm x}}{\norm[p]{\bm x}}\right)^{r} \\
+    1 & \le \frac{\norm[r]{\bm x}}{\norm[p]{\bm x}} \\
+    \therefore \norm[p]{\bm x} & \le \norm[r]{\bm x}
+    \end{align*}
+    \end{proof}
+    \item\begin{proof}$ $\\
+    Let
+    $y=\begin{bmatrix}y_{1}&y_{2}&\cdots&y_{n}\end{bmatrix}^{\top}
+    =\begin{bmatrix}|x_{1}|^{r}&|x_{2}|^{r}&\cdots&|x_{n}|^{r}\end{bmatrix}^{\top}$.\\\\
+    Since $\frac{p}{r},\frac{p}{p-r}\in(1,\infty)$ and
+    $\frac{r}{p}+\frac{p-r}{p}=1$,
+    we can use H\"older's inequality as below.
+    \begin{align*}
+    \sum_{i=1}^{n}|x_{i}|^{r}
+    & =\sum_{i=1}^{n}|1 \cdot y_{i}| \\
+    & \le \norm[\frac{p}{p-r}]{\bm 1}\norm[\frac{p}{r}]{\bm y}
+    \end{align*}
+    By the definition of $l_{p}$ norm, we get
+    \begin{align*}
+    \norm[\frac{p}{p-r}]{\bm 1}\norm[\frac{p}{r}]{\bm y}
+    & =n^{\frac{p-r}{p}}
+    \left(\sum_{i=1}^{n}|y_{i}|^{\frac{p}{r}}\right)^\frac{r}{p} \\
+    & =n^{\frac{p-r}{p}}
+    \left(\sum_{i=1}^{n}||x_{i}|^{r}|^{\frac{p}{r}}\right)^\frac{r}{p} \\
+    & =n^{\frac{p-r}{p}}
+    \left(\sum_{i=1}^{n}|x_{i}|^{p}\right)^\frac{r}{p}
+    \end{align*}
+    The proof ends by taking $r$-th root.
+    \begin{align*}
+    \norm[r]{\bm x}
+    & =\left(\sum_{i=1}^{n}|x_{i}|^{r}\right)^\frac{1}{r} \\
+    & \le n^{\frac{p-r}{pr}}
+    \left(\sum_{i=1}^{n}|x_{i}|^{p}\right)^\frac{1}{p} \\
+    & =n^{\frac{1}{r}-\frac{1}{p}}\norm[p]{\bm x}
+    \end{align*}
+    \end{proof}
+    \end{enumerate}
+\item
+\begin{proof}$ $\\
+Before the start, we can see that $\forall a\in\mathbb{R}$,
+\[\frac{\norm[2]{\bm A(a\bm x)}}{\norm[2]{a\bm x}}
+=\frac{|a|\norm[2]{\bm{Ax}}}{|a|\norm[2]{\bm x}}
+=\frac{\norm[2]{\bm{Ax}}}{\norm[2]{\bm x}}\]
+Therefore, without loss of generality, we can assume $\norm[2]{\bm x}=1$.
+
+Let the singular value decomposition of $\bm A$ as follows:
+\[\bm A=\bm{U \Sigma V}^{\top}\]
+
+Then the square of the fraction becomes
+\begin{align*}
+\norm[2]{\bm{Ax}}^{2}
+& =(\bm{Ax})^{\top}(\bm{Ax}) \\
+& =\bm x^{\top}\bm A^{\top}\bm A\bm x \\
+& =\bm x^{\top}\bm{V\Sigma}^{\top}\bm U^{\top}\bm{U\Sigma V}^{\top}\bm x \\
+& =\bm x^{\top}\bm{V\Sigma}^{\top}\bm{\Sigma V}^{\top}\bm x
+\end{align*}
+We can rewrite this in sigma notation
+\begin{align*}
+\bm x^{\top}\bm{V\Sigma}^{\top}\bm{\Sigma V}^{\top}\bm x
+& =\begin{bmatrix}\cdots \bm x^{\top}\bm v_{i} \cdots\end{bmatrix}
+\begin{bmatrix}
+    \sigma_{1}^{2} & 0 & \cdots & 0 \\
+    0 & \sigma_{2}^{2} & \cdots & 0 \\
+    \vdots & \vdots & \ddots & \vdots \\
+    0 & 0 & \cdots & \sigma_{n}^{2}
+\end{bmatrix}
+\begin{bmatrix}\vdots\\\bm v_{i}^{\top}\bm x\\\vdots\end{bmatrix} \\
+& =\sum_{i=1}^{n}\sigma_{i}^{2}(\bm v_{i}^{\top}\bm x)^{2}
+\end{align*}
+where $\{\bm v_{i}\}$ are the column vectors of $\bm V$,
+and $\{\sigma_{i}\}$ are the singular values of $\bm A$.
+
+Now let's use the fact that $\bm V$ is an $n\times n$ orthogonal matrix.
+This means that its column vectors can span $\mathbb{R}^{n}$, colspace($\bm V$)=$\mathbb{R}^{n}$.
+Therefore, $\bm x$ can be represented as the linear combination of them.
+\[\bm x=\sum_{i=1}^{n}c_{i}\bm v_{i}\]
+By substituting this, we get
+\begin{align*}
+\sum_{i=1}^{n}\sigma_{i}^{2}(\bm v_{i}^{\top}\bm x)^{2}
+& =\sum_{i=1}^{n}\sigma_{i}^{2}
+\left(\bm v_{i}^{\top}\sum_{j=1}^{n}c_{j}\bm v_{j}\right)^{2} \\
+& =\sum_{i=1}^{n}\sum_{j=1}^{n}(\sigma_{i}c_{j}\bm v_{i}^{\top}\bm v_{j})^{2} \\
+& =\sum_{i=1}^{n}(\sigma_{i}c_{i}\bm v_{i}^{\top}\bm v_{i})^{2}
+&&(\because\text{Orthogonality: }\bm v_{i}^{\top}\bm v_{j}=0\text{ for }i\neq j)\\
+& =\sum_{i=1}^{n}\sigma_{i}^{2}c_{i}^{2}
+&&(\because\text{Orthonormality: }\norm[2]{\bm v_{i}}=\bm v_{i}^{\top}\bm v_{i}=1)\\
+\end{align*}
+Recall that we assumed $\norm[2]{\bm x}=1$. This gives an inequality with respect to $\{c_{i}\}$.
+\begin{align*}
+\norm[2]{\bm x}
+& =\bm x^{\top}\bm x \\
+& =\left(\sum_{i=1}^{n}c_{i}\bm v_{i}^{\top}\right)
+\left(\sum_{i=1}^{n}c_{i}\bm v_{i}\right) \\
+& =\sum_{i=1}^{n}\sum_{j=1}^{n}c_{i}c_{j}\bm v_{i}^{\top}\bm v_{j} \\
+& =\sum_{i=1}^{n}c_{i}^{2}
+&&(\because\text{Orthonormality}) \\
+& =1
+\end{align*}
+Thus, we finally get
+\[\norm[2]{\bm{Ax}}^{2}=\sum_{i=1}^{n}\sigma_{i}^{2}c_{i}^{2}
+\le \sum_{i=1}^{n}\sigma_{1}^{2}c_{i}^{2}=\sigma_{1}^{2}\]
+where $\sigma_{1}$ is the largest singular value of $\bm A$.
+\[\therefore \max_{\bm x}\frac{\norm[2]{\bm{Ax}}}{\norm[2]{\bm x}}
+=\max_{\norm[2]{\bm x}=1}\norm[2]{\bm{Ax}}=\sigma_{1}\]
+\end{proof}
+\item
+First, we have to get the eigenvalues of $\bm A^{\top}\bm A$.
+\begin{align*}
+\bm A & =\bm{U \Sigma V}^{\top}=\begin{bmatrix}2&2\\-1&1\end{bmatrix}\\
+\bm A^{\top}\bm A
+& =\bm{V\Sigma}^{\top}\bm U^{\top}\bm{U\Sigma V}^{\top}
+=\bm{V\Sigma}^{2}\bm V^{\top}
+=\begin{bmatrix}5&3\\3&5\end{bmatrix} \\
+\det(\bm{A^{\top}A}-\lambda\bm I)
+& =\begin{vmatrix}5-\lambda&3\\3&5-\lambda\end{vmatrix} \\
+& =(5-\lambda)^{2}-9 \\
+& =\lambda^{2}-10\lambda+16 \\
+& =(\lambda-2)(\lambda-8)=0 \ \ \Rightarrow \lambda=2,8
+\end{align*}
+Then, let's find the eigenspace for each eigenvalue.
+\begin{align*}
+E_{2} & =\left\{\bm x\in\mathbb{R}^{2}\mid
+\begin{bmatrix}3&3\\3&3\end{bmatrix}\bm x=0\right\}
+=\left\{\alpha\begin{bmatrix}1\\-1\end{bmatrix}\mid\alpha\in\mathbb{R}\right\}\\
+E_{8} & =\left\{\bm x\in\mathbb{R}^{2}\mid
+\begin{bmatrix}-3&3\\3&-3\end{bmatrix}\bm x=0\right\}
+=\left\{\alpha\begin{bmatrix}1\\1\end{bmatrix}\mid\alpha\in\mathbb{R}\right\}
+\end{align*}
+Since $\bm A^{\top}\bm{AV}=\bm{V\Sigma}^{2}\bm V^{\top}\bm V=\bm{V\Sigma}^{2}$,
+\begin{align*}
+\bm\Sigma^{2}=\begin{bmatrix}8&0\\0&2\end{bmatrix}
+\Rightarrow \bm\Sigma & =\begin{bmatrix}2\sqrt{2}&0\\0&\sqrt{2}\end{bmatrix}\\
+\bm V & =\begin{bmatrix}\frac{1}{\sqrt{2}}&\frac{1}{\sqrt{2}}\\
+                        \frac{1}{\sqrt{2}}&-\frac{1}{\sqrt{2}}\end{bmatrix}
+\end{align*}
+$\bm U$ can be found in the same way, but we do not have to do this again.
+Since we already computed $\bm V$ and $\bm \Sigma$, let's just use them.
+\begin{align*}
+\bm U & =\bm{AV\Sigma}^{-1} \\
+& =\begin{bmatrix}2&2\\-1&1\\\end{bmatrix}
+\begin{bmatrix}\frac{1}{\sqrt{2}}&\frac{1}{\sqrt{2}}\\
+                        \frac{1}{\sqrt{2}}&-\frac{1}{\sqrt{2}}\end{bmatrix}
+\begin{bmatrix}\frac{1}{2\sqrt{2}}&0\\0&\frac{1}{\sqrt{2}}\end{bmatrix} \\
+& =\begin{bmatrix}1&0\\0&-1\end{bmatrix}
+\end{align*}
+Finally we found the singular value decomposition of $\bm A$.
+\begin{align*}
+\bm A & =\bm{U\Sigma V}^{\top} \\
+& =\begin{bmatrix}1&0\\0&-1\\\end{bmatrix}
+\begin{bmatrix}2\sqrt{2}&0\\0&\sqrt{2}\end{bmatrix}
+\begin{bmatrix}\frac{1}{\sqrt{2}}&\frac{1}{\sqrt{2}}\\
+               \frac{1}{\sqrt{2}}&-\frac{1}{\sqrt{2}}\end{bmatrix} \\
+& =\begin{bmatrix}2&2\\-1&1\\\end{bmatrix}
+\end{align*} \\
+
+\textbf{IMPORTANT}:
+Numerator layout and denominator layout were mixed together in the lecture.
+For the problem 6 and 7, I will use \textit{denominator} layout.
+For example,
+$\frac{\partial y}{\partial\bm x}\in\mathbb{R}^{n}$ and
+$\frac{\partial\bm{Ax}}{\partial\bm x}=\bm A^{\top}$.
+You can get the answer for numerator layout by taking a transpose to the answer from denominator layout.
+
+\item
+Let's compute $\frac{\partial\bm y}{\partial\bm x}$ first.
+Since $\bm h:\mathbb{R}^{D}\rightarrow\mathbb{R}^{D}$,
+the result should be in $\mathbb{R}^{D\times D}$.
+\[\frac{\partial\bm y}{\partial\bm x}
+=\frac{\partial\bm h(\bm x)}{\partial\bm x}
+=\frac{\partial(\bm{x-\mu})}{\partial\bm x}
+=\bm I_{D} \in\mathbb{R}^{D\times D}\]
+Next, let's compute $\frac{\partial z}{\partial\bm y}$.
+Since $g:\mathbb{R}^{D}\rightarrow\mathbb{R}$,
+the result should be in $\mathbb{R}^{D}$.
+\[\frac{\partial z}{\partial\bm y}
+=\frac{\partial g(\bm y)}{\partial\bm y}
+=\frac{\partial(\bm y^{\top}\bm S^{-1}\bm y)}{\partial\bm y}
+=\underbrace{(\bm S^{-1}+\bm S^{-\top})}_{\mathbb{R}^{D\times D}}
+\underbrace{\bm y}_{\mathbb{R}^{D}} \in\mathbb{R}^{D}\]
+Now, let's compute $\frac{\partial f}{\partial z}$.
+We know that the result is in $\mathbb{R}$.
+\[\frac{\partial f}{\partial z}
+=\frac{\partial\left(\exp{\left(-\frac{1}{2}z\right)}\right)}{\partial z}
+=-\frac{1}{2}\exp{\left(-\frac{1}{2}z\right)} \in\mathbb{R}\]
+By using the chain rule - in proper order
+that the result of $\frac{\partial f}{\partial\bm x}$ is in $\mathbb{R}^{D}$
+- we can get
+\begin{align*}
+\frac{\partial f}{\partial\bm x}
+& =\frac{\partial\bm y}{\partial\bm x}
+\frac{\partial z}{\partial\bm y}
+\frac{\partial f}{\partial z} \\
+& =\bm I_{D}
+(\bm S^{-1}+\bm S^{-\top})\bm y
+\left(-\frac{1}{2}\exp{\left(-\frac{1}{2}z\right)}\right) \\
+& =-\frac{1}{2}\exp{\left(-\frac{1}{2}z\right)}
+(\bm S^{-1}+\bm S^{-\top})\bm y
+\end{align*}
+After some substitution, the final result is as below.
+\begin{align*}
+\frac{\partial f}{\partial\bm x}
+& =-\frac{1}{2}\exp{\left(-\frac{1}{2}(\bm y^{\top}\bm S^{-1}\bm y)\right)}
+(\bm S^{-1}+\bm S^{-\top})\bm y \\
+& =-\frac{1}{2}\exp{
+\left(-\frac{1}{2}(\bm x-\bm\mu)^{\top}\bm S^{-1}(\bm x-\bm\mu)\right)}
+(\bm S^{-1}+\bm S^{-\top})(\bm x-\bm\mu) \in\mathbb{R}^{D}
+\end{align*}
+\item
+Let's compute $\frac{\partial z}{\partial\bm x}$ first.
+Since $\bm x\in\mathbb{R}^{D},\bm z\in\mathbb{R}^{E}$,
+the result should be in $\mathbb{R}^{D\times E}$.
+\[\frac{\partial\bm z}{\partial\bm x}
+=\frac{\partial(\bm{Ax+b})}{\partial\bm x}
+=\bm A^{\top} \in\mathbb{R}^{D\times E}\]
+Let's compute $\frac{\partial\bm f}{\partial\bm z}$ now.
+Since $\bm f:\mathbb{R}^{E}\rightarrow\mathbb{R}^{E}$,
+the result should be in $\mathbb{R}^{E\times E}$.
+\[\frac{\partial\bm f}{\partial\bm z}
+=\frac{\partial(\sin{(\bm z)})}{\partial\bm z}
+=\operatorname{diag}(\cos{(z_{1})},\cos{(z_{2})},\dots,\cos{(z_{E})})
+\in\mathbb{R}^{E\times E}\]
+where $\bm z=\begin{bmatrix}z_{1}&z_{2}&\cdots&z_{E}\end{bmatrix}^{\top}$.
+
+By using the chain rule - in proper order that the result of
+$\frac{\partial\bm f}{\partial\bm x}$ is in $\mathbb{R}^{D\times E}$ - we get
+\begin{align*}
+\frac{\partial\bm f}{\partial\bm x}
+& =\frac{\partial\bm z}{\partial\bm x}\frac{\partial\bm f}{\partial\bm z} \\
+& =\bm A^{\top}
+\operatorname{diag}(\cos{(z_{1})},\cos{(z_{2})},\dots,\cos{(z_{E})})
+\in\mathbb{R}^{D\times E}
+\end{align*}
+\end{enumerate}
+\end{document}

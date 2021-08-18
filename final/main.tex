@@ -1,0 +1,300 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[titletoc,title]{appendix}
+\usepackage{fancyhdr}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,mathtools}
+\newcommand{\bmat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\norm}[2][]{\lVert#2\rVert_{#1}}
+\DeclareMathOperator{\tr}{Tr}
+\usepackage{graphicx,float}
+\usepackage{changepage}
+
+\pagestyle{fancy} \fancyhf{}
+\lhead{Final} \rhead{AI501}
+\rfoot{\thepage}
+\title{Final Exam}
+\author{20213073 Donggyu Kim}
+\date{June 17, 2021}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{enumerate}
+\item
+\begin{enumerate}
+    \item
+    The marginal distribution $p(\bm x;\bm\theta)$ is
+    \begin{align*}
+    p(\bm x;\bm\theta) &= \int p(\bm x,\bm z;\bm\theta)\,d\bm z \\
+    &= \int p(\bm x|\bm z;\bm\theta)p(\bm z;\bm\theta)\,d\bm z \\
+    &= \int\mathcal{N}(\bm x|\bm W\bm z+\bm\mu,\sigma^2\bm I_{d})\mathcal{N}(\bm z|\bm 0_{h},\bm I_{h})\,d\bm z \\
+    &= \int\frac{1}{(2\pi)^\frac{d+h}{2}\sigma^d}\exp\left(-\frac{1}{2\sigma^2}(\bm x-\bm W\bm z-\bm\mu)^{\top}(\bm x-\bm W\bm z-\bm\mu)-\frac{1}{2}\bm z^{\top}\bm z\right)d\bm z
+    \end{align*}
+    The exponent part can be rewritten as follows
+    \begin{align*}
+    & -\frac{1}{2\sigma^2}(\bm x-\bm W\bm z-\bm\mu)^{\top}(\bm x-\bm W\bm z-\bm\mu)-\frac{1}{2}\bm z^{\top}\bm z \\
+    =& -\frac{1}{2\sigma^2}\left(\bm z^{\top}\bm V\bm z-2\bm z^{\top}\bm W^{\top}(\bm x-\bm\mu)+(\bm x-\bm\mu)^{\top}(\bm x-\bm\mu)\right) \\
+    =& -\frac{1}{2\sigma^2}\left((\bm z-\bm\alpha)^{\top}\bm V(\bm z-\bm\alpha)+(\bm x-\bm\mu)^{\top}(\bm x-\bm\mu)-\bm\alpha^{\top}\bm V\bm\alpha\right)
+    \end{align*}
+    where $\bm V=\bm W^{\top}\bm W+\sigma^2\bm I_h$ and $\bm\alpha=\bm V^{-1}\bm W^{\top}(\bm x-\bm\mu)$.
+    
+    Using the matrix inverse identity, we further get
+    \begin{align*}
+    & (\bm x-\bm\mu)^{\top}(\bm x-\bm\mu)-\bm\alpha^{\top}\bm V\bm\alpha \\
+    =& (\bm x-\bm\mu)^{\top}(\bm I_d-\bm W\bm V^{-1}\bm W^{\top})(\bm x-\bm\mu) \\
+    =& (\bm x-\bm\mu)^{\top}\left(\bm I_d-(\bm W/\sigma)\left(\bm I_h+\bm W^{\top}\bm W/\sigma^2\right)^{-1}(\bm W^{\top}/\sigma)\right)(\bm x-\bm\mu) \\
+    =& (\bm x-\bm\mu)^{\top}\left(\bm I_d+\bm W\bm W^{\top}/\sigma^2\right)^{-1}(\bm x-\bm\mu)
+    \end{align*}
+    Using the fact $\det(\bm W\bm W^{\top}+\sigma^2\bm I_d)=\sigma^{2d}\det(\bm I_h+\bm W^{\top}\bm W/\sigma^2)$, we have
+    \begin{align*}
+    & \int\exp\left(-\frac{1}{2}\left((\bm z-\bm\alpha)^{\top}(\bm V/\sigma^2)(\bm z-\bm\alpha)\right)\right)d\bm z \\
+    =& \int (2\pi)^\frac{h}{2}\det\left((\bm V/\sigma^2)^{-1}\right)^\frac{1}{2}\mathcal{N}(\bm z|\bm\alpha,(\bm V/\sigma^2)^{-1})\,d\bm z \\
+    =& (2\pi)^\frac{h}{2}\det\left(\bm I_h+\bm W^{\top}\bm W/\sigma^2\right)^{-\frac{1}{2}} \\
+    =& (2\pi)^\frac{h}{2}\sigma^d\det\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-\frac{1}{2}}
+    \end{align*}
+    Thus, we can finally get
+    \begin{align*}
+    p(\bm x;\bm\theta)
+    &= \int\frac{1}{(2\pi)^\frac{d+h}{2}\sigma^d}\exp\Bigg(-\frac{1}{2}\bigg((\bm z-\bm\alpha)^{\top}(\bm V/\sigma^2)(\bm z-\bm\alpha) \\
+    &\hspace{5cm} +(\bm x-\bm\mu)^{\top}\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-1}(\bm x-\bm\mu)\bigg)\Bigg)d\bm z \\
+    &= \frac{(2\pi)^\frac{h}{2}\sigma^d\det\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-\frac{1}{2}}}{(2\pi)^\frac{d+h}{2}\sigma^d}\exp\left(-\frac{1}{2}(\bm x-\bm\mu)^{\top}\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-1}(\bm x-\bm\mu)\right) \\
+    &= \frac{1}{(2\pi)^\frac{d}{2}\det\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^\frac{1}{2}}\exp\left(-\frac{1}{2}(\bm x-\bm\mu)^{\top}\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-1}(\bm x-\bm\mu)\right) \\
+    &= \mathcal{N}(\bm x|\bm\mu,\bm W\bm W^{\top}+\sigma^2\bm I_d)
+    \end{align*}
+    And the conditional distribution $p(\bm z|\bm x;\bm\theta)$ is
+    \begin{align*}
+    p(\bm z|\bm x;\bm\theta)
+    &= \frac{p(\bm x,\bm z;\bm\theta)}{p(\bm x;\bm\theta)} \\
+    &= \frac{p(\bm x|\bm z;\bm\theta)p(\bm z;\bm\theta)}{p(\bm x;\bm\theta)} \\
+    &= \frac{\mathcal{N}(\bm x|\bm W\bm z+\bm\mu,\sigma^2\bm I_{d})\mathcal{N}(\bm z|\bm 0_{h},\bm I_{h})}{\mathcal{N}(\bm x|\bm\mu,\bm W\bm W^{\top}+\sigma^2\bm I_d)} \\
+    &= \frac{1}{(2\pi)^\frac{h}{2}\sigma^d\det\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-\frac{1}{2}}}\exp\left(-\frac{1}{2}(\bm z-\bm\alpha)^{\top}(\bm V/\sigma^2)(\bm z-\bm\alpha)\right) \\
+    &= \frac{1}{(2\pi)^\frac{h}{2}\det(\bm I_h+\bm W^{\top}\bm W/\sigma^2)^{-\frac{1}{2}}}\exp\left(-\frac{1}{2}(\bm z-\bm\alpha)^{\top}(\bm V/\sigma^2)(\bm z-\bm\alpha)\right) \\
+    &= \frac{1}{(2\pi)^\frac{h}{2}\det((\bm V/\sigma^2)^{-1})^\frac{1}{2}}\exp\left(-\frac{1}{2}(\bm z-\bm\alpha)^{\top}(\bm V/\sigma^2)(\bm z-\bm\alpha)\right) \\
+    &= \mathcal{N}(\bm z|\bm\alpha,(\bm V/\sigma^2)^{-1}) \\
+    &= \mathcal{N}(\bm z|\bm V^{-1}\bm W^{\top}(\bm x-\bm\mu),\sigma^2\bm V^{-1})
+    \end{align*}
+    
+    \item
+    The log-likelihood $\log p(\bm X)$ is as follows.
+    \begin{align*}
+    \log p(\bm X) &= \sum_{i=1}^{n}\log p(\bm x;\bm\theta) \\
+    &= \sum_{i=1}^{n}\bigg(-\frac{d}{2}\log 2\pi-\frac{1}{2}\log\det(\bm W\bm W^{\top}+\sigma^2\bm I_d) \\
+    &\hspace{2cm} -\frac{1}{2}(\bm x_i-\bm\mu)^{\top}\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-1}(\bm x_i-\bm\mu)\bigg)
+    \end{align*}
+    Then we can derive its maximum-likelihood estimator of the parameter $\bm\mu$.
+    \begin{align*}
+    \frac{\partial\log p(\bm X)}{\partial\bm\mu}
+    &= \sum_{i=1}^{n}(\bm x_i-\bm\mu)^{\top}\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-1} \\
+    &= \left(\sum_{i=1}^{n}\bm x_i-n\bm\mu\right)^{\top}\left(\bm W\bm W^{\top}+\sigma^2\bm I_d\right)^{-1}=0 \ \Rightarrow\ \bm\mu_{ML}=\frac{1}{n}\sum_{i=1}^{n}\bm x_i
+    \end{align*}
+    
+    \item
+    The expectation of log-likelihood computed in E-step is
+    \begin{align*}
+    \mathbb{E}_{p(\bm z_i|\bm x_i,\bm\theta_t)}[\log p(\bm x_i,\bm z_i;\bm\theta)]
+    &= -\frac{d+h}{2}\log 2\pi-d\log\sigma-\frac{1}{2\sigma^2}(\bm x_i-\bm\mu)^{\top}(\bm x_i-\bm\mu) \\
+    &\hspace{2cm} -\frac{1}{2\sigma^2}\mathbb{E}_{p(\bm z_i|\bm x_i,\bm\theta_t)}\left[\bm z_i^{\top}\bm V\bm z_i-2\bm z_i^{\top}\bm W^{\top}(\bm x_i-\bm\mu)\right]
+    \end{align*}
+    Let $\bm\alpha_{it}=\bm V_t^{-1}\bm W_t^{\top}(\bm x_i-\bm\mu)$. Then,
+    \begin{align*}
+    & \mathbb{E}_{p(\bm z_i|\bm x_i,\bm\theta_t)}\left[\bm z_i^{\top}\bm V\bm z_i-2\bm z_i^{\top}\bm W^{\top}(\bm x_i-\bm\mu)\right] \\
+    =& \mathbb{E}_{\mathcal{N}(\bm z_i|\bm\alpha_{it},\sigma_t^2\bm V_t^{-1})}\left[(\bm z_i-\bm\alpha_{it})^{\top}\bm V(\bm z_i-\bm\alpha_{it})+2\bm z_i^{\top}\bm V\bm\alpha_{it}-\bm\alpha_{it}^{\top}\bm V\bm\alpha_{it}-2\bm z_i^{\top}\bm W^{\top}(\bm x_i-\bm\mu)\right] \\
+    =& \mathbb{E}_{\mathcal{N}(\bm z_i|\bm\alpha_{it},\sigma_t^2\bm V_t^{-1})}\left[(\bm z_i-\bm\alpha_{it})^{\top}\bm V(\bm z_i-\bm\alpha_{it})\right]+\bm\alpha_{it}^{\top}\bm V\bm\alpha_{it}-2\bm\alpha_{it}^{\top}\bm W^{\top}(\bm x_i-\bm\mu) \\
+    =& \mathbb{E}_{\mathcal{N}(\bm z_i|\bm\alpha_{it},\sigma_t^2\bm V_t^{-1})}\left[\tr\left(\bm V(\bm z_i-\bm\alpha_{it})(\bm z_i-\bm\alpha_{it})^{\top}\right)\right]+\bm\alpha_{it}^{\top}\bm V\bm\alpha_{it}-2\bm\alpha_{it}^{\top}\bm W^{\top}(\bm x_i-\bm\mu) \\
+    =& \tr\left(\mathbb{E}_{\mathcal{N}(\bm z_i|\bm\alpha_{it},\sigma_t^2\bm V_t^{-1})}\left[\bm V(\bm z_i-\bm\alpha_{it})(\bm z_i-\bm\alpha_{it})^{\top}\right]\right)+\bm\alpha_{it}^{\top}\bm V\bm\alpha_{it}-2\bm\alpha_{it}^{\top}\bm W^{\top}(\bm x_i-\bm\mu) \\
+    =& \tr\left(\bm V\mathbb{E}_{\mathcal{N}(\bm z_i|\bm\alpha_{it},\sigma_t^2\bm V_t^{-1})}\left[(\bm z_i-\bm\alpha_{it})(\bm z_i-\bm\alpha_{it})^{\top}\right]\right)+\bm\alpha_{it}^{\top}\bm V\bm\alpha_{it}-2\bm\alpha_{it}^{\top}\bm W^{\top}(\bm x_i-\bm\mu) \\
+    =& \sigma_t^2\tr\left(\bm V\bm V_t^{-1}\right)+\bm\alpha_{it}^{\top}\bm V\bm\alpha_{it}-2\bm\alpha_{it}^{\top}\bm W^{\top}(\bm x_i-\bm\mu)
+    \end{align*}
+    Since $\bm\mu=\frac{1}{n}\sum_{i=1}^{n}\bm x_i$ is fixed, we can also compute
+    \begin{align*}
+    & \sum_{i=1}^{n}\left(\bm\alpha_{it}^{\top}\bm V\bm\alpha_{it}-2\bm\alpha_{it}^{\top}\bm W^{\top}(\bm x_i-\bm\mu)\right) \\
+    =& \sum_{i=1}^{n}(\bm x_i-\bm\mu)^{\top}\bm W_t\bm V_t^{-1}\bm V\bm V_t^{-1}\bm W_t^{\top}(\bm x_i-\bm\mu)-2\sum_{i=1}^{n}(\bm x_i-\bm\mu)^{\top}\bm W_t\bm V_t^{-1}\bm W^{\top}(\bm x_i-\bm\mu) \\
+    =& n\tr\left(\bm W_t\bm V_t^{-1}\bm V\bm V_t^{-1}\bm W_t^{\top}\bm S\right)-2n\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm S\right)
+    \end{align*}
+    Therefore, the complete-data log-likelihood $\tilde{\mathcal{L}}(\bm\theta)$ is computed as
+    \begin{align*}
+    \tilde{\mathcal{L}}(\bm\theta) &=
+    \sum_{i=1}^{n}\mathbb{E}_{p(\bm z_i|\bm x_i,\bm\theta_t)}[\log p(\bm x_i,\bm z_i;\bm\theta)] \\
+    &= -\frac{n(d+h)}{2}\log 2\pi-nd\log\sigma-\frac{1}{2\sigma^2}\sum_{i=1}^{n}(\bm x_i-\bm\mu)^{\top}(\bm x_i-\bm\mu)-\frac{n\sigma_t^2}{2\sigma^2}\tr\left(\bm V\bm V_t^{-1}\right) \\
+    &\hspace{4cm} -\frac{n}{2\sigma^2}\tr\left(\bm W_t\bm V_t^{-1}\bm V\bm V_t^{-1}\bm W_t^{\top}\bm S\right)+\frac{n}{\sigma^2}\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm S\right) \\
+    &= -\frac{n(d+h)}{2}\log 2\pi-nd\log\sigma-\frac{n}{2\sigma^2}\tr(\bm S)-\frac{n\sigma_t^2}{2\sigma^2}\tr\left(\bm V\bm V_t^{-1}\right) \\
+    &\hspace{4cm} -\frac{n}{2\sigma^2}\tr\left(\bm W_t\bm V_t^{-1}\bm V\bm V_t^{-1}\bm W_t^{\top}\bm S\right)+\frac{n}{\sigma^2}\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm S\right)
+    \end{align*}
+    Taking the gradient w.r.t. $\bm W$,
+    \begin{align*}
+    \frac{\partial\tilde{\mathcal{L}}(\bm\theta)}{\partial\bm W}
+    &= -\frac{n\sigma_t^2}{2\sigma^2}\frac{\partial\tr\left(\bm V\bm V_t^{-1}\right)}{\partial\bm W}-\frac{n}{2\sigma^2}\frac{\partial\tr\left(\bm W_t\bm V_t^{-1}\bm V\bm V_t^{-1}\bm W_t^{\top}\bm S\right)}{\partial\bm W}+\frac{n}{\sigma^2}\frac{\partial\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm S\right)}{\partial\bm W}
+    \end{align*}
+    First we compute
+    \begin{align*}
+    \frac{\partial\tr\left(\bm V\bm V_t^{-1}\right)}{\partial\bm W}
+    &= \frac{\partial\tr\left((\bm W^{\top}\bm W+\sigma^2\bm I_h)\bm V_t^{-1}\right)}{\partial\bm W} \\
+    &= \frac{\partial\tr\left(\bm W^{\top}\bm W\bm V_t^{-1}\right)}{\partial\bm W} \\
+    &= 2\bm V_t^{-1}\bm W^{\top}
+    \end{align*}
+    Next,
+    \begin{align*}
+    \frac{\partial\tr\left(\bm W_t\bm V_t^{-1}\bm V\bm V_t^{-1}\bm W_t^{\top}\bm S\right)}{\partial\bm W}
+    &= \frac{\partial\tr\left(\bm W_t\bm V_t^{-1}(\bm W^{\top}\bm W+\sigma^2\bm I_h)\bm V_t^{-1}\bm W_t^{\top}\bm S\right)}{\partial\bm W} \\
+    &= \frac{\partial\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm W\bm V_t^{-1}\bm W_t^{\top}\bm S\right)}{\partial\bm W} \\
+    &= \left(\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\bm V_t^{-1}+\left(\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\bm V_t^{-1}\right)^{\top}\right)\bm W^{\top} \\
+    &= 2\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\bm V_t^{-1}\bm W^{\top}
+    \end{align*}
+    Lastly,
+    \[\frac{\partial\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm S\right)}{\partial\bm W}=\left(\bm S\bm W_t\bm V_t^{-1}\right)^{\top}=\bm V_t^{-1}\bm W_t^{\top}\bm S\]
+    So the final form of the gradient w.r.t. $\bm W$ is
+    \begin{align*}
+    \frac{\partial\tilde{\mathcal{L}}(\bm\theta)}{\partial\bm W}
+    &= -\frac{n\sigma_t^2}{\sigma^2}\bm V_t^{-1}\bm W^{\top}-\frac{n}{\sigma^2}\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\bm V_t^{-1}\bm W^{\top}+\frac{n}{\sigma^2}\bm V_t^{-1}\bm W_t^{\top}\bm S \\
+    &= -\frac{n}{\sigma^2}\bm V_t^{-1}\left(\left(\sigma_t^2\bm I_h+\bm W_t^{\top}\bm S\bm W_t\bm V_t^{-1}\right)\bm W^{\top}-\bm W_t^{\top}\bm S\right)
+    \end{align*}
+    Thus, the M-step update equation for $\bm W_{t+1}$ is
+    \begin{align*}
+    \frac{\partial\tilde{\mathcal{L}}(\bm\theta)}{\partial\bm W}=0\ \Rightarrow\ 
+    \bm W_{t+1} &= \left(\left(\sigma_t^2\bm I_h+\bm W_t^{\top}\bm S\bm W_t\bm V_t^{-1}\right)^{-1}\bm W_t^{\top}\bm S\right)^{\top} \\
+    &= \bm S\bm W_t\left(\sigma_t^2\bm I_h+\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\right)^{-1}
+    \end{align*}
+    Now let's take the gradient w.r.t. $\sigma$.
+    \begin{align*}
+    \frac{\partial\tilde{\mathcal{L}}(\bm\theta)}{\partial\sigma}
+    &= -\frac{nd}{\sigma}+\frac{n}{\sigma^3}\tr(\bm S)-\frac{\partial}{\partial\sigma}\left(\frac{n\sigma_t^2}{2\sigma^2}\tr\left(\bm V\bm V_t^{-1}\right)\right) \\
+    &\hspace{1cm} -\frac{\partial}{\partial\sigma}\left(\frac{n}{2\sigma^2}\tr\left(\bm W_t\bm V_t^{-1}\bm V\bm V_t^{-1}\bm W_t^{\top}\bm S\right)\right)-\frac{2n}{\sigma^3}\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm S\right)
+    \end{align*}
+    Firstly,
+    \begin{align*}
+    \frac{\partial}{\partial\sigma}\left(\frac{n\sigma_t^2}{2\sigma^2}\tr\left(\bm V\bm V_t^{-1}\right)\right)
+    &= \frac{\partial}{\partial\sigma}\left(\frac{n\sigma_t^2}{2\sigma^2}\tr\left((\bm W^{\top}\bm W+\sigma^2\bm I_h)\bm V_t^{-1}\right)\right) \\
+    &= \frac{\partial}{\partial\sigma}\left(\frac{n\sigma_t^2}{2\sigma^2}\tr\left(\bm W^{\top}\bm W\bm V_t^{-1}\right)\right) \\
+    &= -\frac{n\sigma_t^2}{\sigma^3}\tr\left(\bm W^{\top}\bm W\bm V_t^{-1}\right)
+    \end{align*}
+    And then we compute
+    \begin{align*}
+    & \frac{\partial}{\partial\sigma}\left(\frac{n}{2\sigma^2}\tr\left(\bm W_t\bm V_t^{-1}\bm V\bm V_t^{-1}\bm W_t^{\top}\bm S\right)\right) \\
+    =& \frac{\partial}{\partial\sigma}\left(\frac{n}{2\sigma^2}\tr\left(\bm W_t\bm V_t^{-1}(\bm W^{\top}\bm W+\sigma^2\bm I_h)\bm V_t^{-1}\bm W_t^{\top}\bm S\right)\right) \\
+    =& \frac{\partial}{\partial\sigma}\left(\frac{n}{2\sigma^2}\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm W\bm V_t^{-1}\bm W_t^{\top}\bm S\right)\right) \\
+    =& -\frac{n}{\sigma^3}\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm W\bm V_t^{-1}\bm W_t^{\top}\bm S\right)
+    \end{align*}
+    Using the properties of trace, we have
+    \begin{align*}
+    \frac{\partial\tilde{\mathcal{L}}(\bm\theta)}{\partial\sigma}
+    &= -\frac{nd}{\sigma}+\frac{n}{\sigma^3}\tr(\bm S)+\frac{n\sigma_t^2}{\sigma^3}\tr\left(\bm W^{\top}\bm W\bm V_t^{-1}\right) \\
+    &\hspace{2cm} +\frac{n}{\sigma^3}\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm W\bm V_t^{-1}\bm W_t^{\top}\bm S\right)-\frac{2n}{\sigma^3}\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm S\right) \\
+    &= -\frac{n}{\sigma^3}\bigg(\sigma^2d-\tr\left(\bm S\right)-\sigma_t^2\tr\left(\bm W^{\top}\bm W\bm V_t^{-1}\right) \\
+    &\hspace{2cm} -\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm W\bm V_t^{-1}\bm W_t^{\top}\bm S\right)+2\tr\left(\bm W_t\bm V_t^{-1}\bm W^{\top}\bm S\right)\bigg) \\
+    &= -\frac{n}{\sigma^3}\bigg(\sigma^2d-\tr\left(\bm S\right)-\sigma_t^2\tr\left(\bm W\bm V_t^{-1}\bm W^{\top}\right) \\
+    &\hspace{2cm} -\tr\left(\bm W\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\bm V_t^{-1}\bm W^{\top}\right)+2\tr\left(\bm S\bm W_t\bm V_t^{-1}\bm W^{\top}\right)\bigg) \\
+    &= -\frac{n}{\sigma^3}\bigg(\sigma^2d-\tr\left(\bm S\right)-\tr\left(\sigma_t^2\bm W\bm V_t^{-1}\bm W^{\top}+\bm W\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\bm V_t^{-1}\bm W^{\top}\right) \\
+    &\hspace{9cm} +2\tr\left(\bm S\bm W_t\bm V_t^{-1}\bm W^{\top}\right)\bigg) \\
+    &= -\frac{n}{\sigma^3}\bigg(\sigma^2d-\tr\left(\bm S\right)-\tr\left(\bm W\left(\sigma_t^2\bm I_h+\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\right)\bm V_t^{-1}\bm W^{\top}\right) \\
+    &\hspace{9cm} +2\tr\left(\bm S\bm W_t\bm V_t^{-1}\bm W^{\top}\right)\bigg) \\
+    &= -\frac{n}{\sigma^3}\bigg(\sigma^2d-\tr\left(\bm S\right)-\tr\left(\bm W\left(\sigma_t^2\bm I_h+\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\right)\bm V_t^{-1}\bm W^{\top}\right) \\
+    &\hspace{9cm} +2\tr\left(\bm S\bm W_t\bm V_t^{-1}\bm W^{\top}\right)\bigg)
+    \end{align*}
+    Substituting $\bm W=\bm W_{t+1}=\bm S\bm W_t\left(\sigma_t^2\bm I_h+\bm V_t^{-1}\bm W_t^{\top}\bm S\bm W_t\right)^{-1}$, we finally get the M-step update equation for $\sigma_{t+1}$.
+    \begin{align*}
+    \frac{\partial\tilde{\mathcal{L}}(\bm\theta)}{\partial\sigma}
+    &= -\frac{n}{\sigma^3}\left(\sigma^2d-\tr\left(\bm S\right)-\tr\left(\bm S\bm W_t\bm V_t^{-1}\bm W_{t+1}^{\top}\right)+2\tr\left(\bm S\bm W_t\bm V_t^{-1}\bm W_{t+1}^{\top}\right)\right) \\
+    &= -\frac{n}{\sigma^3}\left(\sigma^2d-\tr\left(\bm S-\bm S\bm W_t\bm V_t^{-1}\bm W_{t+1}^{\top}\right)\right)=0 \\
+    &\Rightarrow\ \sigma_{t+1}^2=\frac{1}{d}\tr\left(\bm S-\bm S\bm W_t\bm V_t^{-1}\bm W_{t+1}^{\top}\right)
+    \end{align*}
+\end{enumerate}
+\item
+    \begin{enumerate}
+    \item
+    According to Problem 1-(a), we can directly get
+    \begin{align*}
+    p(\bm z|c,\bm x;\bm\theta)
+    &= \mathcal{N}(\bm z|\bm V_c^{-1}\bm W_c^{\top}(\bm x-\bm\mu_c),\sigma_c^2\bm V_c^{-1}) \\
+    p(\bm x|c;\bm\theta)
+    &= \mathcal{N}(\bm x|\bm\mu_c,\bm W_c\bm W_c^{\top}+\sigma_c^2\bm I_d)
+    \end{align*}
+    where $\bm V_c=\bm W_c^{\top}\bm W_c+\sigma_c^2\bm I_h$.
+    
+    So we can compute
+    \begin{align*}
+    p(\bm x;\bm\theta)
+    &= \sum_{j=1}^{k}p(c=j,\bm x;\bm\theta) \\
+    &= \sum_{j=1}^{k}p(c=j;\bm\theta)p(\bm x|c=j;\bm\theta) \\
+    &= \sum_{j=1}^{k}\pi_j\mathcal{N}(\bm x|\bm\mu_j,\bm W_j\bm W_j^{\top}+\sigma_j^2\bm I_d)
+    \end{align*}
+    
+    Then we can derive
+    \begin{align*}
+    p(c|\bm x;\bm\theta)
+    &= \frac{p(c,\bm x;\bm\theta)}{p(\bm x;\bm\theta)} \\
+    &= \frac{\pi_c\mathcal{N}(\bm x|\bm\mu_c,\bm W_c\bm W_c^{\top}+\sigma_c^2\bm I_d)}{\sum_{j=1}^{k}\pi_j\mathcal{N}(\bm x|\bm\mu_j,\bm W_j\bm W_j^{\top}+\sigma_j^2\bm I_d)}
+    \end{align*}
+    
+    \item
+    Since $\bm\pi$ is under the constraint $\sum_{j=1}^{k}\pi_j=1$, we can introduce the Lagrangian multiplier
+    \[{\mathcal{L}}(\bm\theta,\lambda)={\mathcal{L}}(\bm\theta)+\lambda\left(1-\sum_{j=1}^{k}\pi_j\right)\]
+    By taking the gradient w.r.t. $\pi_j$, we have
+    \[\frac{\partial{\mathcal{L}}(\bm\theta,\lambda)}{\partial\pi_j}= \sum_{i=1}^{n}\frac{r_{t,i,j}}{\pi_j}-\lambda=0\ \Rightarrow\  \pi_{t+1,j}=\frac{1}{\lambda}\sum_{i=1}^{n}r_{t,i,j}\]
+    Using the constraint $\sum_{j=1}^{k}\pi_j=1$ again, we can finalize the M-step update for $\bm\pi$.
+    \begin{align*}
+    \sum_{j=1}^{k}\pi_{t+1,j}
+    &= \frac{1}{\lambda}\sum_{i=1}^{n}\sum_{j=1}^{k}r_{t,i,j} \\
+    &= \frac{1}{\lambda}\sum_{i=1}^{n}1=\frac{n}{\lambda}=1\ \Rightarrow\ \lambda=n \\
+    &\therefore \pi_{t+1,j}=\frac{1}{n}\sum_{i=1}^{n}r_{t,i,j}
+    \end{align*}
+    By taking the gradient w.r.t. $\bm\mu$, we can get the M-step update for $\bm\mu$.
+    \begin{align*}
+    \frac{\partial{\mathcal{L}}(\bm\theta,\lambda)}{\partial\bm\mu_j}
+    &= \sum_{i=1}^{n}r_{t,i,j}\frac{\partial}{\partial\bm\mu_{j}}\left(-\frac{1}{2}(\bm x_{i}-\bm\mu_{j})^{\top}(\bm W_j\bm W_j^{\top}+\sigma_j^2\bm I_d)^{-1}(\bm x_{i}-\bm\mu_{j})\right) \\
+    &= \sum_{i=1}^{n}r_{t,i,j}(\bm x_{i}-\bm\mu_{j})^{\top}(\bm W_j\bm W_j^{\top}+\sigma_j^2\bm I_d)^{-1}=\bm 0 \\
+    &\Rightarrow\ \bm\mu_{t+1,j}=\frac{\sum_{i=1}^{n}r_{t,i,j}\bm x_i}{\sum_{i=1}^{n}r_{t,i,j}}
+    \end{align*}
+    
+    \item
+    We can rewrite $q(\bm z_i,c_i;\bm\theta_t)$ as follows.
+    \begin{align*}
+    q(\bm z_i,c_i;\bm\theta_t) &= p(\bm z_i|c_i,\bm x_i;\bm\theta_t)p(c_i|\bm x_i;\bm\theta_t) \\
+    &= r_{t,i,c_i}\mathcal{N}(\bm z_i|\bm V_{t,c_i}^{-1}\bm W_{t,c_i}^{\top}(\bm x_i-\bm\mu_{t,c_i}),\sigma_{t,c_i}^2\bm V_{t,c_i}^{-1})
+    \end{align*}
+    Then, by using the results of Problem 1-(c), we have
+    \begin{align*}
+    \tilde{\mathcal{L}}(\bm\theta)
+    &= \sum_{i=1}^{n}\mathbb{E}_q[\log p(\bm x_i,\bm z_i,c_i;\bm\theta)] \\
+    &= \sum_{i=1}^{n}\sum_{j=1}^{k}r_{t,i,j}\mathbb{E}_{p(\bm z_i|c_i=j,\bm x_i;\bm\theta_t)}[\log p(\bm x_i,\bm z_i,c_i=j;\bm\theta)] \\
+    &= \sum_{i=1}^{n}\sum_{j=1}^{k}r_{t,i,j}\mathbb{E}_{p(\bm z_i|c_i=j,\bm x_i;\bm\theta_t)}[\log p(\bm x_i,\bm z_i|c_i=j;\bm\theta)+\log p(c_i=j;\bm\theta)] \\
+    &= \sum_{i=1}^{n}\sum_{j=1}^{k}r_{t,i,j}\left(\log\pi_j+\mathbb{E}_{p(\bm z_i|c_i=j,\bm x_i;\bm\theta_t)}[\log p(\bm x_i,\bm z_i|c_i=j;\bm\theta)]\right)
+    \end{align*}
+    And we already know that
+    \begin{align*}
+    & \mathbb{E}_{p(\bm z_i|c_i=j,\bm x_i;\bm\theta_t)}[\log p(\bm x_i,\bm z_i|c_i=j;\bm\theta)] \\
+    =& -\frac{d+h}{2}\log 2\pi-d\log\sigma_j-\frac{1}{2\sigma_j^2}(\bm x_i-\bm\mu_j)^{\top}(\bm x_i-\bm\mu_j)-\frac{\sigma_{t,j}^2}{2\sigma_j^2}\tr\left(\bm V_j\bm V_{t,j}^{-1}\right) \\
+    &\hspace{1cm} -\frac{1}{2\sigma_j^2}(\bm x_i-\bm\mu_j)^{\top}\bm W_{t,j}\bm V_{t,j}^{-1}\bm V_j\bm V_{t,j}^{-1}\bm W_{t,j}^{\top}(\bm x_i-\bm\mu_j) \\
+    &\hspace{2cm} +\frac{1}{2\sigma_j^2}(\bm x_i-\bm\mu_j)^{\top}\bm W_{t,j}\bm V_{t,j}^{-1}\bm W_j^{\top}(\bm x_i-\bm\mu_j)
+    \end{align*}
+    where $\bm W_j, \bm W_{t,j}, \bm V_j, \bm V_{t,j}$ are defined for $c_i=j$ in the same manner as Problem 1.
+    
+    Let's define $T_j$ and $n_j$ as follows to write $\tilde{\mathcal{L}}(\bm\theta)$ concisely.
+    \begin{align*}
+    n_j &= \sum_{i=1}^{n}r_{t,i,j} \\
+    T_j &= \frac{1}{n_j}\sum_{i=1}^{n}r_{t,i,j}(\bm x_i-\bm\mu_j)(\bm x_i-\bm\mu_j)^{\top}
+    \end{align*}
+    Then we can rewrite $\tilde{\mathcal{L}}(\bm\theta)$
+    \begin{align*}
+    \tilde{\mathcal{L}}(\bm\theta)
+    &= \sum_{i=1}^{n}\sum_{j=1}^{k}r_{t,i,j}\left(\log\pi_j+\mathbb{E}_{p(\bm z_i|c_i=j,\bm x_i;\bm\theta_t)}[\log p(\bm x_i,\bm z_i|c_i=j;\bm\theta)]\right) \\
+    &= \sum_{i=1}^{n}\sum_{j=1}^{k}r_{t,i,j}\left(\log\pi_j-\frac{d+h}{2}\log 2\pi-d\log\sigma_j\right) \\
+    &\hspace{1cm} -\frac{n_j}{2\sigma_j^2}\sum_{j=1}^{k}\bigg(\tr(\bm T_j)+\sigma_{t,j}^2\tr\left(\bm V_j\bm V_{t,j}^{-1}\right)+\tr\left(\bm W_{t,j}\bm V_{t,j}^{-1}\bm V_j\bm V_{t,j}^{-1}\bm W_{t,j}^{\top}\bm T_j\right) \\
+    &\hspace{9cm} -2\tr\left(\bm W_{t,j}\bm V_{t,j}^{-1}\bm W_{j}^{\top}\bm T_j\right)\bigg) \\
+    &= -\sum_{j=1}^{k}n_jd\log\sigma_j \\
+    &\hspace{1cm} -\frac{n_j}{2\sigma_j^2}\sum_{j=1}^{k}\bigg(\tr(\bm T_j)+\sigma_t^2\tr\left(\bm V_j\bm V_{t,j}^{-1}\right)+\tr\left(\bm W_{t,j}\bm V_{t,j}^{-1}\bm V_j\bm V_{t,j}^{-1}\bm W_{t,j}^{\top}\bm T_j\right) \\
+    &\hspace{7cm} -2\tr\left(\bm W_{t,j}\bm V_{t,j}^{-1}\bm W_{j}^{\top}\bm T_j\right)\bigg)+const.
+    \end{align*}
+    which is almost same to the one in Problem 1.
+    
+    Thus, by taking the gradient as in Problem 1, the M-step equations are
+    \begin{align*}
+    \bm W_{t+1,j} &= \bm T_j\bm W_{t,j}\left(\sigma_{t,j}^2\bm I_h+\bm V_{t,j}^{-1}\bm W_{t,j}^{\top}\bm T_j\bm W_{t,j}\right)^{-1} \\
+    \sigma_{t+1,j}^2 &= \frac{1}{d}\tr\left(\bm T_j-\bm T_j\bm W_{t,j}\bm V_{t,j}^{-1}\bm W_{t+1,j}^{\top}\right)
+    \end{align*}
+    \end{enumerate}
+\end{enumerate}
+\end{document}

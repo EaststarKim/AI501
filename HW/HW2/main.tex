@@ -1,0 +1,169 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[titletoc,title]{appendix}
+\usepackage{fancyhdr}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,mathtools}
+\newcommand{\bmat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\usepackage{graphicx,float}
+\usepackage{changepage}
+
+\pagestyle{fancy} \fancyhf{}
+\lhead{Homework 2} \rhead{AI501}
+\rfoot{\thepage}
+\title{Homework 2}
+\author{20213073 Donggyu Kim}
+\date{April 11, 2021}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{enumerate}
+\item
+\begin{enumerate}
+    \item
+    \begin{proof}$ $\\
+     Whenever $A\subset B$, we get
+    \[B=A\cup (B\setminus A)\]
+    By the definition of probability measures,
+    \begin{align*}
+    \mathbb{P}(B) &= \mathbb{P}(A\cup (B\setminus A)) \\
+    &= \mathbb{P}(A) + \mathbb{P}(B\setminus A)
+    && (\because A,B\setminus A: \text{disjoint}) \\
+    &\ge \mathbb{P}(A) && (\because 0 \le\mathbb{P}(B\setminus A)\le 1)
+    \end{align*}
+    \end{proof}
+    \item
+    \begin{proof}$ $\\
+    For $n=1$, the equality holds. \\
+    Assume that the inequality holds for $n\le k$. \\
+    Let $A=\bigcup_{i=1}^{k}A_{i}$.
+    Then, for $n=k+1$,
+    \begin{align*}
+    \mathbb{P}\left(\bigcup_{i=1}^{k+1}A_{i}\right)
+    &= \mathbb{P}\left(A\cup (A_{k+1}\setminus A)\right) \\
+    &= \mathbb{P}\left(A)+\mathbb{P}(A_{k+1}\setminus A)\right)
+    && (\because A,A_{k+1}\setminus A: \text{disjoint}) \\
+    &\le \sum_{i=1}^{k}\mathbb{P}(A_{i})+\mathbb{P}(A_{k+1}\setminus A)
+    && (\because\text{Inductive hypothesis}) \\
+    &\le \sum_{i=1}^{k}\mathbb{P}(A_{i})+\mathbb{P}(A_{k+1})
+    && (\because A_{k+1}\setminus A\subset A_{k+1}\Rightarrow\text{by (a)}) \\
+    &= \sum_{i=1}^{k+1}\mathbb{P}(A_{i})
+    \end{align*}
+    Thus, the inequality is proved by induction.
+    \end{proof}
+\end{enumerate}
+\item
+    The conjugate prior of a binomial likelihood is a beta distribution.
+    \[p(\pi)=\text{Beta}(\pi|a,b)
+    =\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}\pi^{a-1}(1-\pi)^{b-1}\]
+    Applying Bayes' rule with the prior, we have
+    \begin{align*}
+    p(\pi|x=k,m) &\propto p(x=k|m,\pi)p(\pi) \\
+    &\propto \pi^{k}(1-\pi)^{m-k}\pi^{a-1}(1-\pi)^{b-1} \\
+    &= \pi^{k+a-1}(1-\pi)^{m-k+b-1} \\
+    &\propto\text{Beta}(a+k,b+m-k)
+    \end{align*}
+    The posterior is again a beta distribution.
+\item
+\begin{enumerate}
+    \item
+    $\underbrace{0.7\times\frac{4}{4+2}}_{\text{bag }1}+
+    \underbrace{0.3\times\frac{4}{4+4}}_{\text{bag }2}=\frac{37}{60}$
+    \item
+    $\frac{0.3\times\frac{4}{4+4}}{\frac{37}{60}}=\frac{9}{37}$
+    \item
+    There are 8 cases to pick three apples.
+    \begin{table}[H]\centering
+        \begin{tabular}{|c|c|c|}\hline
+        Coin & Bag & Probability \\
+        \hline\rule{0pt}{3ex}
+        HHH & 1,1,1 & $(0.7)^{3}\times\left(\frac{1}{3}\right)^{3}=\frac{343}{27}\times 10^{-3}$
+        \\[1ex]\hline\rule{0pt}{3ex}
+        HHT & 1,1,2 & $(0.7)^{2}(0.3)^{1}\times\left(\frac{1}{3}\right)^{2}\left(\frac{1}{2}\right)^{1}=\frac{49}{6}\times 10^{-3}$ \\[1ex]\hline\rule{0pt}{3ex}
+        HTH & 1,2,2 & $(0.7)^{2}(0.3)^{1}\times\left(\frac{1}{3}\right)^{1}\left(\frac{1}{2}\right)^{2}=\frac{49}{4}\times 10^{-3}$ \\[1ex]\hline\rule{0pt}{3ex}
+        HTT & 1,2,1 & $(0.7)^{1}(0.3)^{2}\times\left(\frac{1}{3}\right)^{2}\left(\frac{1}{2}\right)^{1}=\frac{7}{2}\times 10^{-3}$ \\[1ex]\hline\rule{0pt}{3ex}
+        THH & 2,2,2 & $(0.7)^{2}(0.3)^{1}\times\left(\frac{1}{2}\right)^{3}=\frac{147}{8}\times 10^{-3}$ \\[1ex]\hline\rule{0pt}{3ex}
+        THT & 2,2,1 & $(0.7)^{1}(0.3)^{2}\times\left(\frac{1}{3}\right)^{1}\left(\frac{1}{2}\right)^{2}=\frac{21}{4}\times 10^{-3}$ \\[1ex]\hline\rule{0pt}{3ex}
+        TTH & 2,1,1 & $(0.7)^{1}(0.3)^{2}\times\left(\frac{1}{3}\right)^{2}\left(\frac{1}{2}\right)^{1}=\frac{7}{2}\times 10^{-3}$ \\[1ex]\hline\rule{0pt}{3ex}
+        TTT & 2,1,2 & $(0.3)^{3}\times\left(\frac{1}{3}\right)^{1}\left(\frac{1}{2}\right)^{2}=\frac{9}{4}\times 10^{-3}$ \\[1ex]\hline
+        \end{tabular}
+    \end{table}
+    So the probability that those apples were only picked from bag 1 is
+    \[\frac{\frac{343}{27}}{\frac{343}{27}+\frac{49}{6}+\frac{49}{4}+\frac{7}{2}+\frac{147}{8}+\frac{21}{4}+\frac{7}{2}+\frac{9}{4}}=\frac{2744}{14255}\]
+\end{enumerate}
+\item
+    \begin{enumerate}
+    \item 
+    $\bm b$ and $\bmat{x\\y}$ are independent.
+    \[p\left(\bm b \ \middle|\bmat{x\\y}\right)=p(\bm b)=\mathcal{N}(\bm 0,\bm Q)\]
+    Since $x$ and $y$ are given for the posterior probability, $\bm A\bmat{x\\y}$ is fixed. Thus,
+    \begin{align*}
+    p(z,w|x,y) &= p\left(\bm A\bmat{x\\y}+\bm b \ \middle|\bmat{x\\y}\right) \\
+    &= \mathcal{N}\left(\bm A\bmat{x\\y},\bm Q\right)
+    \end{align*}
+    \item
+    It is known that any linear/affine transformation of a Gaussian random variable also follows a Gaussian distribution.
+    \[p\left(\bm A\bmat{x\\y}\right)
+    =\mathcal{N}\left(\bm A\bmat{\mu_{x}\\\mu_{y}},\bm A\bmat{\sigma_{xx}^{2}&\sigma_{xy}^{2}\\\sigma_{yx}^{2}&\sigma_{yy}^{2}}\bm A^{\top}\right)\]
+    Again, $\bm b$ and $\bmat{x\\y}$ are independent. Therefore,
+    \begin{align*}
+    p(z,w) &= p\left(\bm A\bmat{x\\y}+\bm b\right) \\
+    &= \mathcal{N}\left(\bm A\bmat{\mu_{x}\\\mu_{y}},\bm A\bmat{\sigma_{xx}^{2}&\sigma_{xy}^{2}\\\sigma_{yx}^{2}&\sigma_{yy}^{2}}\bm A^{\top}+\bm Q\right)
+    \end{align*}
+    \end{enumerate}
+\item
+    \begin{align*}
+    h[\mathbf{x}] &= -\int_{-\infty}^{\infty}p(x)\log p(x)\,dx \\
+    &= -\int_{-\infty}^{\infty}p(x)\left[-\frac{1}{2}(\bm x-\bm\mu)^{\top}\bm\Sigma^{-1}(\bm x-\bm\mu)-\frac{1}{2}\log\{(2\pi)^{n}|\bm\Sigma|\}\right]dx \\
+    &= \int_{-\infty}^{\infty}p(x)\left[\frac{1}{2}(\bm x-\bm\mu)^{\top}\bm\Sigma^{-1}(\bm x-\bm\mu)\right]dx+\int_{-\infty}^{\infty}p(x)\left[\frac{1}{2}\log\{(2\pi)^{n}|\bm\Sigma|\}\right]dx \\
+    &= \frac{1}{2}\mathbb{E}\left[(\bm x-\bm\mu)^{\top}\bm\Sigma^{-1}(\bm x-\bm\mu)\right]+\frac{1}{2}\log\{(2\pi)^{n}|\bm\Sigma|\} \\
+    &= \frac{1}{2}\mathbb{E}\left[\operatorname{tr}\!\left(\bm\Sigma^{-1}(\bm x-\bm\mu)(\bm x-\bm\mu)^{\top}\right)\right]+\frac{1}{2}\log\{(2\pi)^{n}|\bm\Sigma|\} \\
+    &= \frac{1}{2}\operatorname{tr}\left(\mathbb{E}\left[\bm\Sigma^{-1}(\bm x-\bm\mu)(\bm x-\bm\mu)^{\top}\right]\right)+\frac{1}{2}\log\{(2\pi)^{n}|\bm\Sigma|\} \\
+    &= \frac{1}{2}\operatorname{tr}\left(\bm\Sigma^{-1}\mathbb{E}\left[(\bm x-\bm\mu)(\bm x-\bm\mu)^{\top}\right]\right)+\frac{1}{2}\log\{(2\pi)^{n}|\bm\Sigma|\} \\
+    &= \frac{1}{2}\operatorname{tr}\left(\bm\Sigma^{-1}\bm\Sigma\right)+\frac{1}{2}\log\{(2\pi)^{n}|\bm\Sigma|\} \\
+    &= \frac{n}{2}+\frac{1}{2}\log\{(2\pi)^{n}|\bm\Sigma|\}
+    = \frac{1}{2}\log\{(2\pi e)^{n}|\Sigma|\}
+    \end{align*}
+\item
+    \begin{proof}$ $\\
+    Let $\mathbf{y}=(\mathrm{y_{1}},\cdots,\mathrm{y_{n}})$, $\mathbf{z}=(\mathrm{y_{1}},\cdots,\mathrm{y_{n-1}},\mathrm{z})$ where
+    \[\mathrm{z}:=\sum_{i=1}^{n}\mathrm{x_{i}},\ \mathrm{y_{i}}:=\frac{\mathrm{x_{i}}}{\mathrm{z}}\text{ for } i=1,\cdots,n\]
+    To perform a change of variables $(\mathrm{x_{1}},\cdots,\mathrm{x_{n}})\to(\mathrm{y_{1}},\cdots,\mathrm{y_{n-1}},\mathrm{z})$, we need the transformation Jacobian $\bm J=\frac{\partial\mathbf{x}}{\partial\mathbf{z}}$. Since $\mathrm{x}_{i}=\mathrm{y}_{i}\mathrm{z}$ for $i=1,\cdots n-1$ and $\mathrm{x}_{n}=\mathrm{z}-\sum_{i=1}^{n-1}\mathrm{x_{i}}=\mathrm{z}\left(1-\sum_{i=1}^{n-1}\mathrm{y_{i}}\right)$,
+    \[\bm J=\frac{\partial\mathbf{x}}{\partial\mathbf{z}}
+    =\bmat{\mathrm{z}&0&\cdots&\mathrm{y_{1}}\\
+           \mathrm{0}&\mathrm{z}&\cdots&\mathrm{y_{2}}\\
+           \vdots&\vdots&\ddots&\vdots\\
+           \mathrm{-z}&\mathrm{-z}&\cdots&1-\sum_{i=1}^{n-1}\mathrm{y_{i}}}
+    \]
+    By adding the first $n-1$ rows to the $n$-th row, we can easily compute $|\bm J|=\mathrm{z}^{n-1}$
+    Then, we can compute $p(\bm z)=p(\bm x)\left|\frac{\partial\mathbf{x}}{\partial\mathbf{z}}\right|$.
+    \begin{align*}
+    p(\bm z)
+    &= p(\bm x)\left|\frac{\partial\mathbf{x}}{\partial\mathbf{z}}\right| \\
+    &= \left(\prod_{i=1}^{n}\frac{x_{i}^{\alpha_{i}-1}e^{-x_{i}}}{\Gamma(\alpha_{i})}\right)z^{n-1} \\
+    &= \left(\prod_{i=1}^{n}\frac{x_{i}^{\alpha_{i}-1}}{\Gamma(\alpha_{i})}\right)z^{n-1}e^{-\sum_{i=1}^{n}x_{i}} \\
+    &= \frac{\prod_{i=1}^{n}(y_{i}z)^{\alpha_{i}-1}}{\prod_{i=1}^{n}\Gamma(\alpha_{i})}z^{n-1}e^{-z} \\
+    &= \frac{\prod_{i=1}^{n}y_{i}^{\alpha_{i}-1}}{\prod_{i=1}^{n}\Gamma(\alpha_{i})}z^{\sum_{i=1}^{n}\alpha_{i}-1}e^{-z} \\
+    \end{align*}
+    By using this, we can get the PDF of $\mathbf{y}$
+    \begin{align*}
+    p(\bm y)&=p(y_{1},\cdots,y_{n}) \\
+    &=p(y_{1},\cdots,y_{n-1}) \\
+    &= \int_{0}^{\infty}p(y_{1},\cdots,y_{n-1},z)\,dz \\
+    &= \int_{0}^{\infty}\frac{\prod_{i=1}^{n}y_{i}^{\alpha_{i}-1}}{\prod_{i=1}^{n}\Gamma(\alpha_{i})}z^{\sum_{i=1}^{n}\alpha_{i}-1}e^{-z}dz \\
+    &= \frac{\prod_{i=1}^{n}y_{i}^{\alpha_{i}-1}}{\prod_{i=1}^{n}\Gamma(\alpha_{i})}\int_{0}^{\infty}z^{\sum_{i=1}^{n}\alpha_{i}-1}e^{-z}dz \\
+    &= \frac{\Gamma\left(\sum_{i=1}^{n}\alpha_{i}\right)}{\prod_{i=1}^{n}\Gamma(\alpha_{i})}\prod_{i=1}^{n}y_{i}^{\alpha_{i}-1} \\
+    &= \text{Dir}(\bm y|\bm\alpha)
+    \end{align*}
+    where $\bm\alpha=(\alpha_{1},\cdots,\alpha_{n})$.\\
+    To sum up, $\mathbf{y}\in[0,1]^{n}$ with $\sum_{i=1}^{n}y_{i}=1$, and has PDF $p(\bm y)=\frac{\Gamma\left(\sum_{i=1}^{n}\alpha_{i}\right)}{\prod_{i=1}^{n}\Gamma(\alpha_{i})}\prod_{i=1}^{n}y_{i}^{\alpha_{i}-1}$.
+    \[\therefore\mathbf{y}
+    =\left(\frac{\mathrm{x_{1}}}{\sum_{i=1}^{n}\mathrm{x}_{i}},\cdots,\frac{\mathrm{x_{n}}}{\sum_{i=1}^{n}\mathrm{x}_{i}}\right)
+    \sim\text{Dir}\left(\bm\alpha\right)\]
+    \end{proof}
+\end{enumerate}
+\end{document}
